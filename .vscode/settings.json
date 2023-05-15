@@ -1,0 +1,11 @@
+{
+    "json.schemas": [
+
+        {
+            "fileMatch": [
+                "src/animations/*.json"
+            ],
+            "url": "https://lottiefiles.github.io/lottie-docs/schema/lottie.schema.json"
+        }
+    ]
+}
