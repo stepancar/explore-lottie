@@ -213,7 +213,11 @@ export enum BlendMode {
     shapes: ShapeElement[];
   };
   
-  export type SolidColorLayer =  {
+  export type SolidColorLayer = {
+    /**
+     * Это солидный слой
+     * Этот коммент написал я потому что типы тут ниочем!
+     */
     ty: LayerType.solid;
     /** Color of the layer as a #rrggbb hex. */
     sc: string;
@@ -602,6 +606,18 @@ export enum BlendMode {
   };
   
   export type PositionValue = {
+    /**
+     * Типы тут отстой
+     */
+    s?: boolean;
+    /**
+     * lottie НУЖНА ПОМОЩЬ с типами!
+     */
+    x: PositionValue;
+    /**
+     * Розыскивается тайпскрипт гуру
+     */
+    y: PositionValue
     /**
      * number | number[]: Non-animated value.
      * OffsetKeyframe[]: Animated keyframes.

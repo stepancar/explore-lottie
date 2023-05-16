@@ -1,9 +1,25 @@
 import * as PIXI from "pixi.js";
 import captainAmerica from '../../images/1.jpeg';
-import { Animation, LayerType, Transform, SolidColorLayer, Layer, OffsetKeyframe, Value } from './lottie'
+import {
+    Animation,
+    LayerType,
+    Transform,
+    SolidColorLayer,
+    Layer,
+    OffsetKeyframe,
+    Value,
+    PositionValue
+} from './lottie'
 
-export class LottiePixiRenderer {
+export default class Plottie {
+    static loadAnimation(animationData: Animation): PlottieAnimationItem {
+        const plottieAnimationItem = new PlottieAnimationItem(document.body);
+        plottieAnimationItem.load(animationData);
+        return plottieAnimationItem;
+    }
+}
 
+export class PlottieAnimationItem {
     app?: PIXI.Application<HTMLCanvasElement>;
     container: HTMLElement;
     constructor(container: HTMLElement) {
@@ -22,28 +38,28 @@ export class LottiePixiRenderer {
         const height = animationData.h;
         this.app = new PIXI.Application({ width, height });
         this.container.appendChild(this.app.view);
-        // this.app.stage.
-        // this.app.screen)
-        
+
         console.log(animationData.w, animationData.h);
         const layers = animationData.layers || [];
         for (const layer of layers) {
-            if (this.isSolidColorLayer(layer)) {
-                const width = layer.sw = layer.sw || 0;
-                const height = layer.sh = layer.sh || 0;
-                const color = layer.sc;
+            switch (layer.ty) {
+                case LayerType.solid:
+                    const width = layer.sw = layer.sw || 0;
+                    const height = layer.sh = layer.sh || 0;
+                    const color = layer.sc;
 
-                const rectangle = new PIXI.Graphics();
-                rectangle.beginFill(color);
-                rectangle.drawRect(0, 0, width, height);
-                rectangle.endFill();
+                    const rectangle = new PIXI.Graphics();
+                    rectangle.beginFill(color);
+                    rectangle.drawRect(0, 0, width, height);
+                    rectangle.endFill();
 
-                this.app.stage.addChild(rectangle);
+                    this.app.stage.addChild(rectangle);
 
-                this.elements.push({
-                    container: rectangle,
-                    transform: layer.ks,
-                })
+                    this.elements.push({
+                        container: rectangle,
+                        transform: layer.ks,
+                    })
+                    break;
             }
         }
         // TODO
@@ -51,7 +67,7 @@ export class LottiePixiRenderer {
     }
 
     isSolidColorLayer(layer: Layer): layer is SolidColorLayer {
-        return (layer as any).ty === LayerType.solid;
+        return layer.ty === LayerType.solid;
     }
 
     seekToFrame(frame: number) {
@@ -61,37 +77,39 @@ export class LottiePixiRenderer {
     }
 
     render() {
-
-        this.elements.forEach(({container, transform}) => {
-            const {x, y} = getPosition(transform, this.currentFrame);
+        this.elements.forEach(({ container, transform }) => {
+            const { x, y } = getPosition(transform, this.currentFrame);
             const rotation = getRotation(transform, this.currentFrame);
             container.position.x = x;
             container.position.y = y;
 
-            console.log({x, y, rotation});
+            console.log({ x, y, rotation });
             container.rotation = rotation;
         });
     }
 }
 
-function getPosition(transform: Transform, frame: number) {
-    const [x, y] = getPositionValue(transform.p as any, frame);
+function getPosition(transform: Transform, frame: number): { x: number, y: number } {
+    const [x, y] = getPositionValue(transform.p, frame);
     return { x, y };
 }
 
-function getRotation(transform: Transform, frame: number) {
-    const [rotation] = getValues(transform.r as any, frame);
+function getRotation(transform: Transform, frame: number): number {
+    const [rotation] = getValues(transform.r, frame);
     return rotation * Math.PI / 180;
 }
 
-function getPositionValue(value: Value & {x: Value, y: Value}, frame: number): number[] {
+function getPositionValue(value: PositionValue, frame: number): number[] {
     if (value.s) {
         return [
-            getValues(value.x, frame)[0], 
+            getValues(value.x, frame)[0],
             getValues(value.y, frame)[0],
         ];
+    } else {
+        return getValues(value, frame) as number[];
     }
 }
+
 
 function getValues(value: Value, frame: number): number[] {
     if (value.a === 1) {

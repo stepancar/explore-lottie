@@ -56,3 +56,40 @@ const handleNextClick = () => {
 Врубаем html, canvas
 
 Замерить перформанс
+
+
+
+```
+https://lottiefiles.github.io/lottie-docs/
+```
+
+
+```
+https://lottiefiles.github.io/lottie-docs/schema/lottie.schema.json
+```
+
+добавить в .vscode/settings.json
+```
+{
+    "json.schemas": [
+
+        {
+            "fileMatch": [
+                "src/animations/*.json"
+            ],
+            "url": "https://lottiefiles.github.io/lottie-docs/schema/lottie.schema.json"
+        }
+    ]
+}
+```
+
+
+```
+https://github.com/fancy-lottie/lottie-schema
+
+
+https://github.com/marcusstenbeck/lottie-types
+```
+
+
+https://www.notion.so/lumen5/New-transition-System-b1bef69d4d554e48b800ba7e4a0eef1f
